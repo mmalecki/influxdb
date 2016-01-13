@@ -399,24 +399,23 @@ def go_get(branch, update=False):
     else:
         get_command = "go get -d ./..."
 
-    print "Stashing contents of current directory...",
     # 'go get' switches to master, so stash what we currently have
     stash = run("git stash create -a").strip()
-    print " [done]"
+    if len(stash) > 0:
+        print "Contents of current directory stashed as {}...".format(stash),
+        # reset to ensure we don't have any checkout issues
+        run("git reset --hard")
+        print "Retrieving Go dependencies...",
+        run(get_command)
+        print " [done]"
     
-    # reset to ensure we don't have any checkout issues
-    run("git reset --hard")
-    print "Retrieving Go dependencies...",
-    run(get_command)
-    print " [done]"
-    
-    print "Moving back to branch '{}'...".format(branch),
-    run("git checkout {}".format(branch))
-    print " [done]"
-    
-    print "Re-applying stashed contents...",
-    run("git stash apply {}".format(stash))
-    print " [done]\n"
+        print "Moving back to branch '{}'...".format(branch),
+        run("git checkout {}".format(branch))
+        print " [done]"
+        
+        print "Re-applying stashed contents...",
+        run("git stash apply {}".format(stash))
+        print " [done]\n"
 
 def generate_md5_from_file(path):
     m = hashlib.md5()
