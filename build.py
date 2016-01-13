@@ -405,10 +405,11 @@ def go_get(branch, update=False):
         print "Contents of current directory stashed as {}...".format(stash),
         # reset to ensure we don't have any checkout issues
         run("git reset --hard")
+
         print "Retrieving Go dependencies...",
         run(get_command)
         print " [done]"
-    
+
         print "Moving back to branch '{}'...".format(branch),
         run("git checkout {}".format(branch))
         print " [done]"
@@ -416,6 +417,14 @@ def go_get(branch, update=False):
         print "Re-applying stashed contents...",
         run("git stash apply {}".format(stash))
         print " [done]\n"
+    else:
+        print "Retrieving Go dependencies...",
+        run(get_command)
+        print " [done]"
+
+        print "Moving back to branch '{}'...".format(branch),
+        run("git checkout {}".format(branch))
+        print " [done]"
 
 def generate_md5_from_file(path):
     m = hashlib.md5()
